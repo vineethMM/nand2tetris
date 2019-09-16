@@ -1,0 +1,2 @@
+# ignore all .cmp files, there are generated a chip is tested in HardwareStimulator
+*.cmp

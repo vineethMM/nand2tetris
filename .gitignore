@@ -2,5 +2,4 @@
 *.cmp
 *.out
 tools/
-.DS_Store
-
+projects/.DS_Store

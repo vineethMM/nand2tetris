@@ -10,5 +10,3 @@ Key take aways from this course are.
 *  The number of operations supported by ALU is a major design concern.
 *  The trade off here is hardware-software. Given the fact that all the Arithmetic and Logic operations can be achieved through a basic set of operations, the designer can choose which all
    operations should be implemented on hardware, apart from the basic ones consider cost-performance trade offs.
-* Memory chips.
-   Here, we introduce the discrete time concept (rather than considering time as continuous). This is important to abstract way the delays in propagating the voltage in physical implementation. Basic unit of time is one clock cycle. Memory chips are nothing but circuits that can `remember` high/low voltage over discrete time. They are called sequential chips.

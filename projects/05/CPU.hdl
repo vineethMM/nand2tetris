@@ -41,18 +41,36 @@ CHIP CPU {
     PARTS:
     // First multiplexer logic
     Not(in=instruction[15], out=aIns); // if instruction[15] = 0 , it is A-instruction
+    // choose between ALU output and instruction based on instruction type (A or C).
     Mux16(a=aluOut, b=instruction, sel=aIns, out=mux1out); // when it is A-instruction, get the address as output;
 
-    // Loading A-register
-    ARegister(in=mux1out, load=aIns, out=regA, out[15]=writeM); // when A-instruction, load A-register
+    // When to load A-register ?
+    // If it is a A instruction or (C instruction and Destination bit (d1) is 1)
+    Or(a=aIns, b=instruction[5], out=destA);
+    ARegister(in=mux1out, load=destA, out=regA, out[0..14]=addressM);
 
-    // Select between inM and A register
-    Mux16(a=inM, b=regA, sel=aIns, out=mux2out, out[0..14]=addressM);
+    // When to write to addressM ?
+    // If it is C instruction and destination bit (d3) is 1.
+    And(a=instruction[15], b=instruction[3], out=writeM);
 
-    // TODO- D-register logic
-    DRegister(in=aluOut, load=instruction[15], out=regD);
+    // When to load D-register ?
+    // If it is a C instruction and destination bit (d2) is 1.
+    And(a=instruction[15], b=instruction[04], out=destD);
+    DRegister(in=aluOut, load=destD, out=regD);
 
-    ALU(x=regD, y=mux2out, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=aluOut, out=outM);
+    // Select between A register and inM
+    // Select A register] if control bit a = 0 else M
+    Mux16(a=regA, b=inM, sel=instruction[12], out=mux2out);
 
-    PC(in=regA, load=false, inc=true, reset=reset, out[0..14]=pc);
+    // Carry out the operation on D-register value and `mux2out`.
+    ALU(x=regD, y=mux2out, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=aluOut, out=outM, zr=zrPin, ng=ngPin);
+
+    // Jump logic - Determine when to load PC with A-register value.
+    Mux(a=instruction[2], b=instruction[1], sel=zrPin, out=j1Orj2);
+    Xor(a=ngPin, b=zrPin, out=ngXorZr);
+    Mux(a=instruction[0], b=j1Orj2, sel=ngXorZr, out=jumpTemp);
+    And(a=instruction[15], b=jumpTemp, out=jump);
+
+    // Program counter.
+    PC(in=regA, load=jump, inc=true, reset=reset, out[0..14]=pc);
 }

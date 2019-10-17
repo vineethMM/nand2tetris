@@ -18,17 +18,6 @@ object Assembler {
         case instruction(a) => a.trim
         case a => a.trim
       }
-      .toList
-
-    lines.zipWithIndex
-      .toList
-       .take(138)
-      .foreach(a => println(a))
-
-   // lines.zipWithIndex
-   //   .toList
-   //   .take(138)
-   //   .foreach(a => println(a))
 
     val asmProgram = AsmProgram(lines)
 

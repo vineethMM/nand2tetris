@@ -2,52 +2,8 @@ package com.study.nandtotetris.assembler
 
 import scala.util.Try
 
-sealed trait MemoryAddress15 {
-  def at14 : Boolean
-  def at13 : Boolean
-  def at12 : Boolean
-  def at11 : Boolean
-  def at10 : Boolean
-  def at9 : Boolean
-  def at8 : Boolean
-  def at7 : Boolean
-  def at6 : Boolean
-  def at5 : Boolean
-  def at4 : Boolean
-  def at3: Boolean
-  def at2 : Boolean
-  def at1: Boolean
-  def at0 : Boolean
-
-  def print: String =
-    List(at14, at13, at12, at11, at10, at9, at8, at7, at6, at5, at4, at3, at2, at1, at0)
-    .map( bit => if(bit) "1" else "0")
-    .mkString
-}
-
-case class Address15 (
-  at14: Boolean,
-  at13: Boolean,
-  at12: Boolean,
-  at11: Boolean,
-  at10: Boolean,
-  at9: Boolean,
-  at8: Boolean,
-  at7: Boolean,
-  at6: Boolean,
-  at5: Boolean,
-  at4: Boolean,
-  at3: Boolean,
-  at2: Boolean,
-  at1: Boolean,
-  at0: Boolean
-) extends MemoryAddress15
-
-
 object Address15 {
-  def leftPad(str:String,
-              paddedLength:Int,
-              ch:Char ='.' ) : String = {
+  def leftPad(str:String, paddedLength:Int, ch:Char ='.' ) : String = {
     var remLength = paddedLength - str.length;
 
     if (remLength <= 0) {
@@ -62,19 +18,13 @@ object Address15 {
 
     builder.append(str);
 
-    return builder.toString();
+    builder.toString();
   }
 
   def toAddress15(short: Short): Option[String] = {
-    val isInRange = true
-
-    if(isInRange){
-      Some(
+     Try (
         leftPad(short.toBinaryString, 15, '0')
-      )
-    } else {
-      None
-    }
+      ).toOption
   }
 
   val r0Address = 0.toShort
